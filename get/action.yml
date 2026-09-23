@@ -16,7 +16,7 @@ runs:
     - name: Download environment variables
       uses: actions/download-artifact@v4
       with:
-        name: ams-env
+        name: .action-ams-env
         path: .action
 
     - name: Set AMS environment variables
