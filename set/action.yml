@@ -12,20 +12,21 @@ runs:
     - name: Compose AMS
       shell: sh
       run: |
-        mkdir -p .action
-
         export TZ="Europe/Bratislava"
         git fetch --unshallow || git fetch
         AMS_REVISION=$(git describe --tags 2>/dev/null || echo "no-tag")
+        
+        echo "AMS_NAME=${{ github.event.repository.name }}" >> ams.env
+        echo "AMS_REVISION=$AMS_REVISION" >> ams.env
+        echo "AMS_BUILD=$(date '+%y%m%d-%H%M%S')" >> ams.env
 
-        echo "AMS_NAME=${{ github.event.repository.name }}" >> .action/ams.env
-        echo "AMS_REVISION=$AMS_REVISION" >> .action/ams.env
-        echo "AMS_BUILD=$(date '+%y%m%d-%H%M%S')" >> .action/ams.env
+        cat ams.env >> ${GITHUB_ENV}
 
-        cat .action/ams.env >> ${GITHUB_ENV}
-
+        cat ${GITHUB_ENV}
+        cat ams.env
+        
     - name: Upload environment variables
       uses: actions/upload-artifact@v4
       with:
         name: ams-env
-        path: .action/ams.env
+        path: ams.env
